@@ -1,18 +1,47 @@
-const http = require("http");
-const io = require("socket.io");
+const passport = require("passport"),
+      addStrategies = require("./auth");
 
-const app = http.createServer((req, res) => {
-  res.writeHead(200);
-  res.end("ok");
-});
+addStrategies(passport);
 
-app.listen(3000);
+const app = require("express")(),
+      server = require("http").Server(app),
+      io = require("socket.io")(server),
+      addSocketEvents = require("./io"),
+      mongoose = require("mongoose"),
+      { addMiddlewares, ...routes } = require("./routes")
 
-io.on("connection", socket => {
-  socket.emit("status", "connected successfully!");
 
-  socket.on("upload recipe", data => {
+require("dotenv").config();
 
+const startServer = () => {
+  addMiddlewares(app);
+  addSocketEvents(io);
+
+  app.use(passport.initialize());
+  app.get("/", (req, res) => res.status(200).send("connected!"));
+  app.use("/newUser", routes.newUser);
+  app.use("/login", routes.login);
+
+  passport.serializeUser(function(user, done) {
+    done(null, user);
+  });
+  
+  passport.deserializeUser(function(user, done) {
+    done(null, user);
   });
 
-});
+  server.listen(
+    3000, 
+    console.log.bind(console, "Now listening on port 3000")
+  );
+};
+
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true });
+const db = mongoose.connection;
+
+db.on(
+  "error", 
+  console.log.bind(console, "connection error: ")
+);
+
+db.once("open", startServer);
