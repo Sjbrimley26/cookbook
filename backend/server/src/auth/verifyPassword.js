@@ -7,20 +7,20 @@ const verifyPassword = async (email, password, next) => {
     return next(new Error("Email or password missing!"));
   }
 
-  const user = await User.find({
+  const user = await User.findOne({
     email
-  });
+  }).exec();
 
   if (!user) {
     return next(new Error("No user with that email address!"));
   }
 
-  const { email: username, password: hash } = user;
+  const { password: hash } = user;
 
   const match = await bcrypt.compare(password, hash);
 
   if (match) {
-    return username;
+    return user.public;
   } else {
     return next(new Error("Invalid password!"));
   }

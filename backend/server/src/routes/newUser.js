@@ -5,13 +5,13 @@ const router = require("express").Router(),
 
 router.post("/", async (req, res, next) => {
   const { email, password, ...details } = req.body;
-  
-  if (!username || !password) {
+
+  if (!email || !password) {
     return next(new Error("Email or password missing!"));
   }
 
   try {
-    const existing = await User.find({ email });
+    const existing = await User.findOne({ email });
     if (existing) {
       return next(new Error("Email already registered!"));
     }

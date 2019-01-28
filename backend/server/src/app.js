@@ -13,6 +13,8 @@ const app = require("express")(),
 
 require("dotenv").config();
 
+// Server starts after mongoose connects
+
 const startServer = () => {
   addMiddlewares(app);
   addSocketEvents(io);
@@ -35,6 +37,8 @@ const startServer = () => {
     console.log.bind(console, "Now listening on port 3000")
   );
 };
+
+// Connect to Mongo
 
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true });
 const db = mongoose.connection;

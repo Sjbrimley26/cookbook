@@ -22,12 +22,8 @@ const UserSchema = Schema({
 });
 
 UserSchema.virtual("public").get(function() {
-  const {
-    email,
-    password,
-    ...details
-  } = this;
-  return details;
+  const { name, recipes, id } = this;
+  return { name, recipes, id };
 });
 
 const User = model("User", UserSchema);

@@ -24,8 +24,8 @@ router.post("/", (req, res, next) => {
           { expiresIn: "1d" }
         );
         return res.json({
-          email: user,
-          token
+          token,
+          ...user
         });
       });
     }

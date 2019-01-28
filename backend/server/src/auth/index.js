@@ -9,7 +9,8 @@ module.exports = passport => {
   passport.use(
     new LocalStrategy(
       {
-        session: false
+        session: false,
+        usernameField: "email"
       },
       async function(email, password, next) {
         try {
@@ -32,7 +33,8 @@ module.exports = passport => {
       {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: process.env.JWT_SECRET,
-        session: false
+        session: false,
+        usernameField: "email"
       },
       async (jwt, next) => {
         try {
